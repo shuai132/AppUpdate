@@ -1,18 +1,15 @@
 package com.azhon.appupdate.manager;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.azhon.appupdate.activity.PermissionActivity;
 import com.azhon.appupdate.config.UpdateConfiguration;
 import com.azhon.appupdate.dialog.UpdateDialog;
-import com.azhon.appupdate.service.DownloadService;
 import com.azhon.appupdate.utils.ApkUtil;
 import com.azhon.appupdate.utils.Constant;
 import com.azhon.appupdate.utils.LogUtil;
-import com.azhon.appupdate.utils.PermissionUtil;
 
 /**
  * 项目名:    AppUpdate
@@ -62,7 +59,7 @@ public class DownloadManager {
     /**
      * 要更新apk的versionCode
      */
-    private int apkVersionCode = 1;
+    private int apkVersionCode = 0;
     /**
      * 显示给用户的版本号
      */
@@ -82,7 +79,7 @@ public class DownloadManager {
 
     private static DownloadManager manager;
 
-    public static DownloadManager getInstance(Context context) {
+    public static DownloadManager getInstance(Activity context) {
         if (manager == null) {
             synchronized (DownloadManager.class) {
                 if (manager == null) {
@@ -94,7 +91,7 @@ public class DownloadManager {
     }
 
     private DownloadManager(Context context) {
-        this.context = context.getApplicationContext();
+        this.context = context;
     }
 
     /**
@@ -213,32 +210,29 @@ public class DownloadManager {
      * 开始下载
      */
     public void download() {
-        if (checkParams()) {
-            //检查权限
-            if (!PermissionUtil.checkStoragePermission(context)) {
-                //没有权限,去申请权限
-                context.startActivity(new Intent(context, PermissionActivity.class));
-                return;
-            }
-            context.startService(new Intent(context, DownloadService.class));
+        checkParams();
+
+        boolean hasUpdate = true;
+        // 若设置过versionCode就仅使用它判断
+        if (getApkVersionCode() > 0) {
+            hasUpdate = apkVersionCode > ApkUtil.getVersionCode(context);
+        }
+
+        if (hasUpdate) {
+            UpdateDialog dialog = new UpdateDialog(context);
+            dialog.show();
         } else {
-            //对版本进行判断，是否显示升级对话框
-            if (apkVersionCode > ApkUtil.getVersionCode(context)) {
-                UpdateDialog dialog = new UpdateDialog(context);
-                dialog.show();
-            } else {
-                if (showNewerToast) {
-                    Toast.makeText(context, "当前已是最新版本!", Toast.LENGTH_SHORT).show();
-                }
-                LogUtil.e(TAG, "当前已是最新版本");
+            if (showNewerToast) {
+                Toast.makeText(context, "当前已是最新版本!", Toast.LENGTH_SHORT).show();
             }
+            LogUtil.e(TAG, "当前已是最新版本");
         }
     }
 
     /**
      * 检查参数
      */
-    private boolean checkParams() {
+    private void checkParams() {
         if (TextUtils.isEmpty(apkUrl)) {
             throw new RuntimeException("apkUrl can not be empty!");
         }
@@ -258,18 +252,6 @@ public class DownloadManager {
         if (configuration == null) {
             configuration = new UpdateConfiguration();
         }
-        //设置了 VersionCode 则库中进行对话框逻辑处理
-        if (apkVersionCode > 1) {
-            if (TextUtils.isEmpty(apkDescription)) {
-                throw new RuntimeException("apkDescription can not be empty!");
-            }
-            return false;
-        }
-        //如果设置了小于的versionCode 你不是在写bug就是脑子瓦塌拉
-        if (apkVersionCode < 1) {
-            throw new RuntimeException("apkVersionCode can not be < 1");
-        }
-        return true;
     }
 
     /**

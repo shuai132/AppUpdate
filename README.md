@@ -85,7 +85,7 @@ manager.setApkName("appupdate.apk")
 * 兼容Android N 及以上版本，在你应用的`Manifest.xml`添加如下代码
 
 ```
-<--! android:authorities="${applicationId}" 
+<--! android:authorities="${applicationId}"
 这个值必须与DownloadManager中的authorities一致（不设置则为应用包名）-->
 
 <provider
@@ -123,12 +123,12 @@ public class MyDownload extends BaseHttpDownloadManager {}
 ### 版本更新记录
 
 * v1.2.0
-	* 添加是否提示用户 "当前已是最新版本" 的布尔值 
+	* 添加是否提示用户 "当前已是最新版本" 的布尔值
 	* 修复部分手机请求权限时抛出：`Only fullscreen opaque activities can request orientation`
-	
+
 * v1.4.0
 	* 修复在Android O设备上更新进度手机一直震动问题
-	
+
 * v1.5.0
     * 添加强制更新逻辑
 
@@ -138,16 +138,16 @@ public class MyDownload extends BaseHttpDownloadManager {}
 * v1.5.2
     * 添加对话框按钮点击事件监听
     * 启动下载服务时增加了通知栏开关状态检查，结果以打印日志的形式反馈
-    
+
 * v1.5.3
-    * 修复权限申请返回结果数组为空的情况   
-     
+    * 修复权限申请返回结果数组为空的情况
+
 * v1.5.5
     * 解决部分下载地址无法获取到文件大小问题
-    
+
 * v1.5.6
     * 新增Android N uri authorities授权设置
-    
+
 * v1.5.9
     * 修复单例对象引用context引起的内存泄漏问题
 
