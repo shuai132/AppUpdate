@@ -79,7 +79,7 @@ public class DownloadManager {
 
     private static DownloadManager manager;
 
-    public static DownloadManager getInstance(Activity context) {
+    public static DownloadManager getInstance(Context context) {
         if (manager == null) {
             synchronized (DownloadManager.class) {
                 if (manager == null) {
@@ -91,7 +91,7 @@ public class DownloadManager {
     }
 
     private DownloadManager(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     /**
@@ -209,7 +209,7 @@ public class DownloadManager {
     /**
      * 开始下载
      */
-    public void download() {
+    public void download(Activity activity) {
         checkParams();
 
         boolean hasUpdate = true;
@@ -219,7 +219,7 @@ public class DownloadManager {
         }
 
         if (hasUpdate) {
-            UpdateDialog dialog = new UpdateDialog(context);
+            UpdateDialog dialog = new UpdateDialog(activity);
             dialog.show();
         } else {
             if (showNewerToast) {

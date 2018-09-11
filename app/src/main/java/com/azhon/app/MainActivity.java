@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnDownloadListene
                                 .setApkUrl("https://raw.githubusercontent.com/azhon/AppUpdate/master/apk/appupdate.apk")
                                 .setDownloadPath(Environment.getExternalStorageDirectory() + "/AppUpdate")
                                 .setSmallIcon(R.mipmap.ic_launcher)
-                                .download();
+                                .download(MainActivity.this);
                     }
                 }).create().show();
     }
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnDownloadListene
                 .setApkUrl("https://raw.githubusercontent.com/azhon/AppUpdate/master/apk/appupdate.apk")
                 .setDownloadPath(Environment.getExternalStorageDirectory() + "/AppUpdate")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .download();
+                .download(MainActivity.this);
     }
 
     private void startUpdate3() {
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnDownloadListene
                 .setApkSize("20.4")
                 .setAuthorities(getPackageName())
                 .setApkDescription("1.支持断点下载\n2.支持Android N\n3.支持Android O\n4.支持自定义下载过程\n5.支持 设备>=Android M 动态权限的申请\n6.支持通知栏进度条展示(或者自定义显示进度)")
-                .download();
+                .download(this);
     }
 
     @Override
