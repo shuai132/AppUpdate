@@ -75,17 +75,17 @@ public class UpdateDialog extends Dialog implements View.OnClickListener {
         View line = view.findViewById(R.id.line);
         update.setOnClickListener(this);
         ibClose.setOnClickListener(this);
+        setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                //屏蔽返回键
+                return keyCode == KeyEvent.KEYCODE_BACK;
+            }
+        });
         //强制升级
         if (forcedUpgrade) {
             line.setVisibility(View.GONE);
             ibClose.setVisibility(View.GONE);
-            setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    //屏蔽返回键
-                    return keyCode == KeyEvent.KEYCODE_BACK;
-                }
-            });
         }
         //设置界面数据
         if (!TextUtils.isEmpty(manager.getApkVersionName())) {
