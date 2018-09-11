@@ -1,10 +1,10 @@
 package com.azhon.appupdate.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -46,6 +46,10 @@ public class UpdateDialog extends Dialog implements View.OnClickListener {
     public UpdateDialog(@NonNull Context context) {
         super(context, R.style.UpdateDialog);
         init(context);
+    }
+
+    public void setImgTitle(Drawable imgTitle) {
+        findViewById(R.id.img_title).setBackground(imgTitle);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.azhon.appupdate.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -76,6 +77,10 @@ public class DownloadManager {
      * 兼容Android N 添加uri权限 authorities
      */
     private String authorities = "";
+    /**
+     * 下载dialog上方的图片
+     */
+    private Drawable imgTitle;
 
     private static DownloadManager manager;
 
@@ -206,6 +211,15 @@ public class DownloadManager {
         return this;
     }
 
+    public Drawable getImgTitle() {
+        return imgTitle;
+    }
+
+    public DownloadManager setImgTitle(Drawable imgTitle) {
+        this.imgTitle = imgTitle;
+        return this;
+    }
+
     /**
      * 开始下载
      */
@@ -220,6 +234,9 @@ public class DownloadManager {
 
         if (hasUpdate) {
             UpdateDialog dialog = new UpdateDialog(activity);
+            if (imgTitle != null) {
+                dialog.setImgTitle(imgTitle);
+            }
             dialog.show();
         } else {
             if (showNewerToast) {
