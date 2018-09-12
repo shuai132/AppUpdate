@@ -2,15 +2,16 @@ package com.azhon.appupdate.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.widget.Toast;
 
+import com.azhon.appupdate.activity.PermissionActivity;
 import com.azhon.appupdate.config.UpdateConfiguration;
 import com.azhon.appupdate.dialog.UpdateDialog;
-import com.azhon.appupdate.utils.ApkUtil;
+import com.azhon.appupdate.service.DownloadService;
 import com.azhon.appupdate.utils.Constant;
-import com.azhon.appupdate.utils.LogUtil;
+import com.azhon.appupdate.utils.PermissionUtil;
 
 /**
  * 项目名:    AppUpdate
@@ -44,12 +45,6 @@ public class DownloadManager {
      */
     private String downloadPath;
     /**
-     * 是否提示用户 "当前已是最新版本"
-     * <p>
-     * {@link #download()}
-     */
-    private boolean showNewerToast = false;
-    /**
      * 通知栏的图标 资源路径
      */
     private int smallIcon = -1;
@@ -57,10 +52,6 @@ public class DownloadManager {
      * 整个库的一些配置属性，可以从这里配置
      */
     private UpdateConfiguration configuration;
-    /**
-     * 要更新apk的versionCode
-     */
-    private int apkVersionCode = 0;
     /**
      * 显示给用户的版本号
      */
@@ -121,15 +112,6 @@ public class DownloadManager {
         return this;
     }
 
-    public int getApkVersionCode() {
-        return apkVersionCode;
-    }
-
-    public DownloadManager setApkVersionCode(int apkVersionCode) {
-        this.apkVersionCode = apkVersionCode;
-        return this;
-    }
-
     public String getApkName() {
         return apkName;
     }
@@ -146,15 +128,6 @@ public class DownloadManager {
     public DownloadManager setDownloadPath(String downloadPath) {
         this.downloadPath = downloadPath;
         return this;
-    }
-
-    public DownloadManager setShowNewerToast(boolean showNewerToast) {
-        this.showNewerToast = showNewerToast;
-        return this;
-    }
-
-    public boolean isShowNewerToast() {
-        return showNewerToast;
     }
 
     public int getSmallIcon() {
@@ -221,29 +194,30 @@ public class DownloadManager {
     }
 
     /**
+     * 开始更新对话框
+     */
+    public void startUpdateDialog(Activity activity) {
+        checkParams();
+        UpdateDialog dialog = new UpdateDialog(activity);
+        if (imgTitle != null) {
+            dialog.setImgTitle(imgTitle);
+        }
+        dialog.show();
+    }
+
+    /**
      * 开始下载
      */
-    public void download(Activity activity) {
+    public void startDownload() {
         checkParams();
 
-        boolean hasUpdate = true;
-        // 若设置过versionCode就仅使用它判断
-        if (getApkVersionCode() > 0) {
-            hasUpdate = apkVersionCode > ApkUtil.getVersionCode(context);
+        //检查权限
+        if (!PermissionUtil.checkStoragePermission(context)) {
+            //没有权限,去申请权限
+            context.startActivity(new Intent(context, PermissionActivity.class));
+            return;
         }
-
-        if (hasUpdate) {
-            UpdateDialog dialog = new UpdateDialog(activity);
-            if (imgTitle != null) {
-                dialog.setImgTitle(imgTitle);
-            }
-            dialog.show();
-        } else {
-            if (showNewerToast) {
-                Toast.makeText(context, "当前已是最新版本!", Toast.LENGTH_SHORT).show();
-            }
-            LogUtil.e(TAG, "当前已是最新版本");
-        }
+        context.startService(new Intent(context, DownloadService.class));
     }
 
     /**
